@@ -3,7 +3,6 @@ using CoreFinalDemo.Filters;
 using CoreFinalDemo.Models;
 using CoreFinalDemo.Models.DTO;
 using CoreFinalDemo.Models.ENUM;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoreFinalDemo.Controllers

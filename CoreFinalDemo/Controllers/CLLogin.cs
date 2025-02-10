@@ -15,15 +15,16 @@ namespace CoreFinalDemo.Controllers
         private Response _objResponse;
         private ILogin _objBLLogin;
         private USR01 _objUSR01;
+        private readonly ILogger _logger;
 
-        public CLLogin(Response objResponse,ILogin objBLLogin)
+        public CLLogin(Response objResponse,ILogin objBLLogin, ILogger<CLLogin> logger)
         {
             _objResponse = objResponse;
             _objBLLogin = objBLLogin;
+            _logger = logger;
         }
 
         [HttpPost("Login")]
-        [AllowAnonymous]
         public IActionResult Login(DTOLogin objDTO)
         {
             _objUSR01 = _objBLLogin.AuthenticatUser(objDTO);
@@ -37,6 +38,8 @@ namespace CoreFinalDemo.Controllers
             {
                 _objResponse = _objBLLogin.GenerateJwt(_objUSR01);
             }
+
+            _logger.LogInformation(_objResponse.Message);
 
             return Ok(_objResponse);
         }
