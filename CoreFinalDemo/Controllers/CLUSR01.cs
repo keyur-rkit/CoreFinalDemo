@@ -4,11 +4,16 @@ using CoreFinalDemo.Models.ENUM;
 using CoreFinalDemo.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using CoreFinalDemo.Filters;
 
 namespace CoreFinalDemo.Controllers
 {
+    /// <summary>
+    /// User controller.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [JWTAuthorizationFilter("Admin")]
     public class CLUSR01 : ControllerBase
     {
         private Response _objResponse;
@@ -20,14 +25,22 @@ namespace CoreFinalDemo.Controllers
             _objBLUSR01 = objBLUSR01;
         }
 
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        /// <returns>List of users.</returns>
         [HttpGet("GetAllUsers")]
         public IActionResult GetAllUsers()
         {
             _objResponse = _objBLUSR01.GetAll();
-
             return Ok(_objResponse);
         }
 
+        /// <summary>
+        /// Get user by ID.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <returns>User details.</returns>
         [HttpGet("GetUserById")]
         public IActionResult GetUserById(int id)
         {
@@ -35,6 +48,11 @@ namespace CoreFinalDemo.Controllers
             return Ok(_objResponse);
         }
 
+        /// <summary>
+        /// Add new user.
+        /// </summary>
+        /// <param name="objDTOUSR01">User DTO.</param>
+        /// <returns>Result of add operation.</returns>
         [HttpPost("AddUser")]
         public IActionResult AddUser(DTOUSR01 objDTOUSR01)
         {
@@ -50,6 +68,12 @@ namespace CoreFinalDemo.Controllers
             return Ok(_objResponse);
         }
 
+        /// <summary>
+        /// Edit existing user.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <param name="objDTOUSR01">User DTO.</param>
+        /// <returns>Result of edit operation.</returns>
         [HttpPut("EditUser")]
         public IActionResult EditUser(int id, DTOUSR01 objDTOUSR01)
         {
@@ -66,6 +90,11 @@ namespace CoreFinalDemo.Controllers
             return Ok(_objResponse);
         }
 
+        /// <summary>
+        /// Delete user.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <returns>Result of delete operation.</returns>
         [HttpDelete("DeleteUser")]
         public IActionResult DeleteUser(int id)
         {

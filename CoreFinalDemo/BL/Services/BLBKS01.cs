@@ -10,16 +10,17 @@ using System.Data;
 
 namespace CoreFinalDemo.BL.Services
 {
+    /// <summary>
+    /// Business logic for book operations.
+    /// </summary>
     public class BLBKS01 : IBKS01
     {
         private readonly IDbConnectionFactory _dbFactory;
         private Response _objResponse;
         private BKS01 _objBKS01;
 
-
         public EnmEntryType Operation { get; set; }
         public int Id { get; set; }
-
 
         public BLBKS01(IDbConnectionFactory dbFactory, Response objResponse)
         {
@@ -32,7 +33,11 @@ namespace CoreFinalDemo.BL.Services
             }
         }
 
-
+        /// <summary>
+        /// Check if a book exists.
+        /// </summary>
+        /// <param name="id">Book ID.</param>
+        /// <returns>True if the book exists, otherwise false.</returns>
         public bool IsExist(int id)
         {
             using (IDbConnection db = _dbFactory.OpenDbConnection())
@@ -41,69 +46,81 @@ namespace CoreFinalDemo.BL.Services
             }
         }
 
+        /// <summary>
+        /// Get all books.
+        /// </summary>
+        /// <returns>Response with list of books.</returns>
         public Response GetAll()
         {
-            try
+            //try
+            //{
+            List<BKS01> result = new List<BKS01>();
+
+            using (IDbConnection db = _dbFactory.OpenDbConnection())
             {
-                List<BKS01> result = new List<BKS01>();
-
-                using (IDbConnection db = _dbFactory.OpenDbConnection())
-                {
-                    result = db.Select<BKS01>().ToList();
-                }
-
-                if (result.Count == 0)
-                {
-                    _objResponse.IsError = true;
-                    _objResponse.Message = "Zero books available";
-                    _objResponse.Data = null;
-
-                    return _objResponse;
-                }
-                _objResponse.IsError = false;
-                _objResponse.Data = result;
-                _objResponse.Message = "Books retrieved successfully";
-
-                return _objResponse;
+                result = db.Select<BKS01>().ToList();
             }
-            catch (Exception ex)
+
+            if (result.Count == 0)
             {
                 _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
+                _objResponse.Message = "Zero books available";
+                _objResponse.Data = null;
 
                 return _objResponse;
             }
+            _objResponse.IsError = false;
+            _objResponse.Data = result;
+            _objResponse.Message = "Books retrieved successfully";
+
+            return _objResponse;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
+
+            //    return _objResponse;
+            //}
         }
 
+        /// <summary>
+        /// Get book by ID.
+        /// </summary>
+        /// <param name="id">Book ID.</param>
+        /// <returns>Response with book details.</returns>
         public Response GetById(int id)
         {
-            try
-            {
-                if (!IsExist(id))
-                {
-                    _objResponse.IsError = true;
-                    _objResponse.Message = "Book does not exist";
-                    _objResponse.Data = null;
-
-                    return _objResponse;
-                }
-                using (IDbConnection db = _dbFactory.OpenDbConnection())
-                {
-                    _objResponse.Data = db.SingleById<BKS01>(id);
-                    _objResponse.Message = "Book retrieved successfully";
-                    return _objResponse;
-                }
-            }
-            catch (Exception ex)
+            //try
+            //{
+            if (!IsExist(id))
             {
                 _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
-                
+                _objResponse.Message = "Book does not exist";
+                _objResponse.Data = null;
+
                 return _objResponse;
             }
+            using (IDbConnection db = _dbFactory.OpenDbConnection())
+            {
+                _objResponse.Data = db.SingleById<BKS01>(id);
+                _objResponse.Message = "Book retrieved successfully";
+                return _objResponse;
+            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
+
+            //    return _objResponse;
+            //}
         }
 
-
+        /// <summary>
+        /// Prepare book data for saving.
+        /// </summary>
+        /// <param name="objDTO">Book DTO.</param>
         public void PreSave(DTOBKS01 objDTO)
         {
             _objBKS01 = objDTO.Convert<BKS01>();
@@ -112,8 +129,12 @@ namespace CoreFinalDemo.BL.Services
             {
                 _objBKS01.S01F01 = Id;
             }
-
         }
+
+        /// <summary>
+        /// Validate book data.
+        /// </summary>
+        /// <returns>Response with validation result.</returns>
         public Response Validation()
         {
             if (Operation == EnmEntryType.E || Operation == EnmEntryType.D)
@@ -133,72 +154,77 @@ namespace CoreFinalDemo.BL.Services
             return _objResponse;
         }
 
+        /// <summary>
+        /// Save book data.
+        /// </summary>
+        /// <returns>Response with save result.</returns>
         public Response Save()
         {
-            try
+            //try
+            //{
+            using (IDbConnection db = _dbFactory.OpenDbConnection())
             {
-                using (IDbConnection db = _dbFactory.OpenDbConnection())
+                if (Operation == EnmEntryType.A)
                 {
-
-                    if (Operation == EnmEntryType.A)
-                    {
-                        _objBKS01.S01F01 = (int)db.Insert(_objBKS01, selectIdentity: true);
-                        _objResponse.Message = $"Book added with Id {_objBKS01.S01F01}";
-                        return _objResponse;
-                    }
-                    else if (Operation == EnmEntryType.E)
-                    {
-                        db.Update(_objBKS01);
-                        _objResponse.Message = $"Book with Id {Id} edited";
-                        return _objResponse;
-                    }
-                    else
-                    {
-                        _objResponse.IsError = true;
-                        _objResponse.Message = "Invalid Operation type";
-                        return _objResponse;
-                    }
-
+                    _objBKS01.S01F01 = (int)db.Insert(_objBKS01, selectIdentity: true);
+                    _objResponse.Message = $"Book added with Id {_objBKS01.S01F01}";
+                    return _objResponse;
+                }
+                else if (Operation == EnmEntryType.E)
+                {
+                    db.Update(_objBKS01);
+                    _objResponse.Message = $"Book with Id {Id} edited";
+                    return _objResponse;
+                }
+                else
+                {
+                    _objResponse.IsError = true;
+                    _objResponse.Message = "Invalid Operation type";
+                    return _objResponse;
                 }
             }
-            catch (Exception ex)
-            {
-                _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
 
-                return _objResponse;
-            }
+            //    return _objResponse;
+            //}
         }
 
+        /// <summary>
+        /// Delete book data.
+        /// </summary>
+        /// <returns>Response with delete result.</returns>
         public Response Delete()
         {
-            try
+            //try
+            //{
+            using (IDbConnection db = _dbFactory.OpenDbConnection())
             {
-                using (IDbConnection db = _dbFactory.OpenDbConnection())
+                if (Operation == EnmEntryType.D)
                 {
-                    if (Operation == EnmEntryType.D)
-                    {
-                        db.DeleteById<BKS01>(Id);
-                        _objResponse.Message = $"Book with Id {Id} deleted";
+                    db.DeleteById<BKS01>(Id);
+                    _objResponse.Message = $"Book with Id {Id} deleted";
 
-                        return _objResponse;
-                    }
-                    else
-                    {
-                        _objResponse.IsError = true;
-                        _objResponse.Message = "Invalid Operation type";
-                        return _objResponse;
-                    }
+                    return _objResponse;
+                }
+                else
+                {
+                    _objResponse.IsError = true;
+                    _objResponse.Message = "Invalid Operation type";
+                    return _objResponse;
                 }
             }
-            catch (Exception ex)
-            {
-                _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
-                
-                return _objResponse;
-            }
-        }
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
 
+            //    return _objResponse;
+            //}
+        }
     }
 }

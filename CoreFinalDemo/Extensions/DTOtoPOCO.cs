@@ -2,8 +2,18 @@
 
 namespace CoreFinalDemo.Extensions
 {
+    /// <summary>
+    /// Extension methods for converting DTO objects to POCO objects.
+    /// </summary>
     public static class DTOtoPOCO
     {
+        /// <summary>
+        /// Converts a DTO object to a POCO object.
+        /// </summary>
+        /// <typeparam name="POCO">The type of the POCO object.</typeparam>
+        /// <param name="dto">The DTO object.</param>
+        /// <returns>The converted POCO object.</returns>
+        /// <exception cref="Exception">Thrown when the conversion fails.</exception>
         public static POCO Convert<POCO>(this object dto)
         {
             Type? pocoType = typeof(POCO) ?? throw new Exception();

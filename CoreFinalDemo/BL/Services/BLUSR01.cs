@@ -10,6 +10,9 @@ using System.Data;
 
 namespace CoreFinalDemo.BL.Services
 {
+    /// <summary>
+    /// User service for handling user operations.
+    /// </summary>
     public class BLUSR01 : IUSR01
     {
         private readonly IDbConnectionFactory _dbFactory;
@@ -32,6 +35,11 @@ namespace CoreFinalDemo.BL.Services
             }
         }
 
+        /// <summary>
+        /// Check if user exists.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <returns>True if user exists, otherwise false.</returns>
         public bool IsExist(int id)
         {
             using (IDbConnection db = _dbFactory.OpenDbConnection())
@@ -40,10 +48,14 @@ namespace CoreFinalDemo.BL.Services
             }
         }
 
+        /// <summary>
+        /// Get all users.
+        /// </summary>
+        /// <returns>Response with list of users.</returns>
         public Response GetAll()
         {
-            try
-            {
+            //try
+            //{
                 using (IDbConnection db = _dbFactory.OpenDbConnection())
                 {
                     List<USR01> result = db.Select<USR01>().ToList();
@@ -61,21 +73,25 @@ namespace CoreFinalDemo.BL.Services
 
                     return _objResponse;
                 }
-            }
-            catch (Exception ex)
-            {
-                _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
 
-                return _objResponse;
-            }
+            //    return _objResponse;
+            //}
         }
 
-
+        /// <summary>
+        /// Get user by ID.
+        /// </summary>
+        /// <param name="id">User ID.</param>
+        /// <returns>Response with user details.</returns>
         public Response GetById(int id)
         {
-            try
-            {
+            //try
+            //{
                 if (!IsExist(id))
                 {
                     _objResponse.IsError = true;
@@ -90,17 +106,20 @@ namespace CoreFinalDemo.BL.Services
                     _objResponse.Message = "User retrieved successfully";
                     return _objResponse;
                 }
-            }
-            catch (Exception ex)
-            {
-                _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
 
-                return _objResponse;
-            }
+            //    return _objResponse;
+            //}
         }
 
-
+        /// <summary>
+        /// Prepare user data for saving.
+        /// </summary>
+        /// <param name="objDTO">User DTO.</param>
         public void PreSave(DTOUSR01 objDTO)
         {
             _objUSR01 = objDTO.Convert<USR01>();
@@ -111,6 +130,11 @@ namespace CoreFinalDemo.BL.Services
             }
 
         }
+
+        /// <summary>
+        /// Validate user data.
+        /// </summary>
+        /// <returns>Response with validation result.</returns>
         public Response Validation()
         {
             if (Operation == EnmEntryType.E || Operation == EnmEntryType.D)
@@ -130,10 +154,14 @@ namespace CoreFinalDemo.BL.Services
             return _objResponse;
         }
 
+        /// <summary>
+        /// Save user data.
+        /// </summary>
+        /// <returns>Response with save result.</returns>
         public Response Save()
         {
-            try
-            {
+            //try
+            //{
                 using (IDbConnection db = _dbFactory.OpenDbConnection())
                 {
 
@@ -157,20 +185,24 @@ namespace CoreFinalDemo.BL.Services
                     }
 
                 }
-            }
-            catch (Exception ex)
-            {
-                _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
 
-                return _objResponse;
-            }
+            //    return _objResponse;
+            //}
         }
 
+        /// <summary>
+        /// Delete user data.
+        /// </summary>
+        /// <returns>Response with delete result.</returns>
         public Response Delete()
         {
-            try
-            {
+            //try
+            //{
                 using (IDbConnection db = _dbFactory.OpenDbConnection())
                 {
                     if (Operation == EnmEntryType.D)
@@ -187,14 +219,14 @@ namespace CoreFinalDemo.BL.Services
                         return _objResponse;
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                _objResponse.IsError = true;
-                _objResponse.Message = ex.Message;
+            //}
+            //catch (Exception ex)
+            //{
+            //    _objResponse.IsError = true;
+            //    _objResponse.Message = ex.Message;
 
-                return _objResponse;
-            }
+            //    return _objResponse;
+            //}
         }
     }
 }

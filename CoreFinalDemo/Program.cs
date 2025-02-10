@@ -1,6 +1,3 @@
-using CoreFinalDemo.BL.Interface;
-using CoreFinalDemo.BL.Services;
-using CoreFinalDemo.Models;
 using ServiceStack.Data;
 using ServiceStack.OrmLite;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +7,10 @@ using Microsoft.OpenApi.Models;
 using NLog.Extensions.Logging;
 using NLog;
 using NLog.Web;
+using CoreFinalDemo.Middleware;
+using CoreFinalDemo.Filters;
+using CoreFinalDemo.Extensions;
+using System.Reflection;
 
 namespace CoreFinalDemo
 {
@@ -19,9 +20,6 @@ namespace CoreFinalDemo
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Ensure the logs directory exists
-            var logDirectory = Path.Combine(AppContext.BaseDirectory, "logs");
-            Directory.CreateDirectory(logDirectory);
 
             var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 
@@ -32,8 +30,15 @@ namespace CoreFinalDemo
                 builder.Services.AddControllers();
                 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
                 builder.Services.AddEndpointsApiExplorer();
+
+                // Enable XML comments in Swagger
+                var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFilename);
+
                 builder.Services.AddSwaggerGen(c =>
                 {
+                    c.IncludeXmlComments(xmlPath); // Load XML file
+
                     // Add JWT Authentication in Swagger
                     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                     {
@@ -41,25 +46,27 @@ namespace CoreFinalDemo
                         BearerFormat = "JWT",
                         Scheme = "Bearer",
                         In = ParameterLocation.Header,
-                        Description = "Enter 'Bearer <your-token>' to authenticate."
+                        Description = "Enter <your-token> to authenticate."
                     });
 
                     c.AddSecurityRequirement(new OpenApiSecurityRequirement
                     {
-                    {
-                        new OpenApiSecurityScheme
                         {
-                            Reference = new OpenApiReference
+                            new OpenApiSecurityScheme
                             {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            new string[] {}
+                        }
                     });
+
                 });
 
+                // global JWTAuthorizationFilter
                 //builder.Services.AddControllers(options =>
                 //{
                 //    options.Filters.Add(new JWTAuthorizationFilter());
@@ -68,10 +75,7 @@ namespace CoreFinalDemo
                 builder.Services.AddSingleton<IDbConnectionFactory>(new OrmLiteConnectionFactory(
                     builder.Configuration.GetConnectionString("coreFinalLibrary1"), MySqlDialect.Provider));
 
-                builder.Services.AddTransient<Response>();
-                builder.Services.AddTransient<IBKS01, BLBKS01>();
-                builder.Services.AddTransient<IUSR01, BLUSR01>();
-                builder.Services.AddTransient<ILogin, BLLogin>();
+                builder.Services.AddBLServices(); // Custom Extension Method
 
                 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     .AddJwtBearer(options =>
@@ -96,10 +100,15 @@ namespace CoreFinalDemo
                     loggigBuilders.AddNLog();
                 });
 
+                builder.Services.AddAuthorization();
+
                 var app = builder.Build();
 
                 // Use NLog for logging during the application startup
                 app.Logger.LogInformation("Application started.");
+
+                app.UseExceptionHandlingMiddleware(); // Global Exception Middleware
+
 
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())
