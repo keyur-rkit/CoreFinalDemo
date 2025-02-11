@@ -70,8 +70,8 @@ namespace CoreFinalDemo.BL.Services
                 return _objResponse;
             }
             _objResponse.IsError = false;
-            _objResponse.Data = result;
             _objResponse.Message = "Books retrieved successfully";
+            _objResponse.Data = result;
 
             return _objResponse;
             //}

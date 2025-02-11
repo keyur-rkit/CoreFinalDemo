@@ -14,6 +14,7 @@ namespace CoreFinalDemo.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [JWTAuthorizationFilter("Admin")]
+    [ServiceFilter(typeof(LoggingFilter))]
     public class CLUSR01 : ControllerBase
     {
         private Response _objResponse;

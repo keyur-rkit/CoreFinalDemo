@@ -63,9 +63,9 @@ namespace CoreFinalDemo.BL.Services
 
             Claim[] claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, objUSR01.R01F02),
+                new Claim(ClaimTypes.Name, objUSR01.R01F02),
                 new Claim(ClaimTypes.Role, role) // Dynamically setting the role
-                };
+            };
 
             JwtSecurityToken token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],

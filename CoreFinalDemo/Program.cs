@@ -102,13 +102,14 @@ namespace CoreFinalDemo
 
                 builder.Services.AddAuthorization();
 
+                builder.Services.AddScoped<LoggingFilter>();
+
                 var app = builder.Build();
 
                 // Use NLog for logging during the application startup
                 app.Logger.LogInformation("Application started.");
 
                 app.UseExceptionHandlingMiddleware(); // Global Exception Middleware
-
 
                 // Configure the HTTP request pipeline.
                 if (app.Environment.IsDevelopment())

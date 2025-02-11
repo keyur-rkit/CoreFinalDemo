@@ -1,11 +1,11 @@
 ﻿using CoreFinalDemo.BL.Interface;
+using CoreFinalDemo.Filters;
 using CoreFinalDemo.Models;
 using CoreFinalDemo.Models.DTO;
 using CoreFinalDemo.Models.POCO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace CoreFinalDemo.Controllers
 {
@@ -14,18 +14,17 @@ namespace CoreFinalDemo.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(LoggingFilter))]
     public class CLLogin : ControllerBase
     {
         private Response _objResponse;
         private ILogin _objBLLogin;
         private USR01 _objUSR01;
-        private readonly ILogger _logger;
 
-        public CLLogin(Response objResponse, ILogin objBLLogin, ILogger<CLLogin> logger)
+        public CLLogin(Response objResponse, ILogin objBLLogin)
         {
             _objResponse = objResponse;
             _objBLLogin = objBLLogin;
-            _logger = logger;
         }
 
         /// <summary>
@@ -43,13 +42,13 @@ namespace CoreFinalDemo.Controllers
             {
                 _objResponse.IsError = true;
                 _objResponse.Message = "Credentials are invalid";
+
             }
             else
             {
                 _objResponse = _objBLLogin.GenerateJwt(_objUSR01);
             }
 
-            _logger.LogInformation(_objResponse.Message);
 
             return Ok(_objResponse);
         }

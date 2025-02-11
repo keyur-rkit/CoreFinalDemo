@@ -18,7 +18,7 @@ namespace CoreFinalDemo.Models.DTO
         /// Password
         /// </summary>
         [Required(ErrorMessage = "Password is required.")]
-        [StringLength(255, MinimumLength = 6, ErrorMessage = "Password should be between 6 and 100 characters.")]
+        [StringLength(255, MinimumLength = 6, ErrorMessage = "Password should be at least 6 characters.")]
         public string R01F03 { get; set; }
     }
 }

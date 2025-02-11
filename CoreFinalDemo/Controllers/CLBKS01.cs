@@ -13,6 +13,7 @@ namespace CoreFinalDemo.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
+    [ServiceFilter(typeof(LoggingFilter))]
     public class CLBKS01 : ControllerBase
     {
         private Response _objResponse;
