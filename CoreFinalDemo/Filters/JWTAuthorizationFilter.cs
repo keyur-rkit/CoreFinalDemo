@@ -44,7 +44,7 @@ namespace CoreFinalDemo.Filters
                 return;
             }
 
-            var roleClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+            string roleClaim = user.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
 
             //// for debugging
             //foreach (var claim in user.Claims)

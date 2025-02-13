@@ -34,7 +34,7 @@ namespace CoreFinalDemo.Middleware
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                await HandleExceptionAsync(httpContext, ex);
+                await HandleExceptionAsync(httpContext);
             }
         }
 
@@ -42,9 +42,8 @@ namespace CoreFinalDemo.Middleware
         /// Handles the exception and returns a response.
         /// </summary>
         /// <param name="httpContext">The HTTP context.</param>
-        /// <param name="exception">The exception that occurred.</param>
         /// <returns>A task representing the asynchronous operation.</returns>
-        private static Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
+        private static Task HandleExceptionAsync(HttpContext httpContext)
         {
             _objResponse.IsError = true;
             _objResponse.Message = "An unexpected error occurred. Please try again later.";
