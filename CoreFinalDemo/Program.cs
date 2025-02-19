@@ -14,8 +14,15 @@ using System.Reflection;
 
 namespace CoreFinalDemo
 {
+    /// <summary>
+    /// Entry point of Project
+    /// </summary>
     public class Program
     {
+        /// <summary>
+        /// Entry method of program.cs
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);

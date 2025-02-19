@@ -92,17 +92,17 @@ namespace CoreFinalDemo.BL.Services
         {
             //try
             //{
-                if (!IsExist(id))
-                {
-                    _objResponse.IsError = true;
-                    _objResponse.Message = "User does not exist";
-                    _objResponse.Data = null;
-
-                    return _objResponse;
-                }
                 using (IDbConnection db = _dbFactory.OpenDbConnection())
                 {
                     _objResponse.Data = db.SingleById<USR01>(id);
+
+                    if(_objResponse.Data == null)
+                    {
+                        _objResponse.IsError = true;
+                        _objResponse.Message = "User does not exist";
+                        return (_objResponse);
+                    }
+
                     _objResponse.Message = "User retrieved successfully";
                     return _objResponse;
                 }
